@@ -136,6 +136,10 @@ class CKKSwrapper {
   CiphertextInterfaceType *EvalSum(const CiphertextInterfaceType &c,
                                    uint32_t batch_size);
 
+  CiphertextInterfaceType *EvalAtIndex(const CiphertextInterfaceType &c,
+                                                    int32_t index);
+
+  
  private:
   // CryptoContext
   lbcrypto::CryptoContext<lbcrypto::DCRTPoly> m_cc;

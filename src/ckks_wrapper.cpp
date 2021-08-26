@@ -66,9 +66,16 @@ void CKKSwrapper::KeyGen(uint32_t multDepth, uint32_t scaleFactorBits,
       multDepth, scaleFactorBits, batchSize, HEStd_128_classic);
   m_cc->Enable(ENCRYPTION);
   m_cc->Enable(SHE);
+  m_cc->Enable(LEVELEDSHE);
   m_keys = m_cc->KeyGen();
-  m_cc->EvalMultKeyGen(m_keys.secretKey);
+  m_cc->EvalMultKeysGen(m_keys.secretKey);
   m_cc->EvalSumKeyGen(m_keys.secretKey);
+
+  std::vector<int32_t> indexList = {};
+  for (uint32_t n=1; n<=batchSize; n *= 2) {
+    indexList.push_back( -1 * n );
+  }
+  m_cc->EvalAtIndexKeyGen(m_keys.secretKey, indexList);
 }
 
 CiphertextInterfaceType *CKKSwrapper::Encrypt(
@@ -130,6 +137,14 @@ CiphertextInterfaceType *CKKSwrapper::EvalSum(
       new CiphertextImpl<DCRTPoly>(ciphertext.GetCiphertext()));
   auto cipherSum = m_cc->EvalSum(cipher, batch_size);
   return new CiphertextInterfaceType(cipherSum);
+}
+
+CiphertextInterfaceType *CKKSwrapper::EvalAtIndex(
+    const CiphertextInterfaceType &ciphertext, int32_t index) {
+  auto cipher = Ciphertext<DCRTPoly>(
+      new CiphertextImpl<DCRTPoly>(ciphertext.GetCiphertext()));
+  auto cipherRot = m_cc->EvalAtIndex(cipher, index);
+  return new CiphertextInterfaceType(cipherRot);
 }
 
 }  // namespace pycrypto

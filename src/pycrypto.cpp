@@ -66,6 +66,8 @@ BOOST_PYTHON_MODULE(pycrypto) {
            return_value_policy<manage_new_object>())
       .def("EvalMultConst", &pycrypto::CKKSwrapper::EvalMultConst,
            return_value_policy<manage_new_object>())
+      .def("EvalAtIndex", &pycrypto::CKKSwrapper::EvalAtIndex,
+           return_value_policy<manage_new_object>())
       .def("EvalSum", &pycrypto::CKKSwrapper::EvalSum,
            return_value_policy<manage_new_object>());
 }
